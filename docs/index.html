@@ -86,7 +86,7 @@
         // Configuration variables - these would come from your Salesforce Lightning Out 2.0 app setup
         const sfInstanceUrl = 'https://ibm-1fc.my.salesforce.com';
         const clientId = '3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6';
-        const redirectUri = 'https://sampath-arjunan.github.io/docs/oauth-callback.html';
+        const redirectUri = 'https://sampath-arjunan.github.io/oauth-callback.html';
         
         // OAuth 2.0 configuration
         const authUrl = `${sfInstanceUrl}/services/oauth2/authorize`;
@@ -191,7 +191,7 @@
             const authParams = new URLSearchParams({
                 response_type: 'code',
                 client_id: '3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6',
-                redirect_uri: 'https://sampath-arjunan.github.io/docs/oauth-callback.html',
+                redirect_uri: 'https://sampath-arjunan.github.io/oauth-callback.html',
                 state: state,
                 prompt: 'login consent',
                 code_challenge: codeChallenge,

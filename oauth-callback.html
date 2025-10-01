@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Callback</title>
+    <script>
+        // Parse the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
+        const error = urlParams.get('error');
+        const errorDescription = urlParams.get('error_description');
+        
+        // Construct the redirect URL with the same parameters
+        let redirectUrl = 'docs/oauth-callback.html';
+        const searchParams = new URLSearchParams();
+        
+        if (code) searchParams.append('code', code);
+        if (state) searchParams.append('state', state);
+        if (error) searchParams.append('error', error);
+        if (errorDescription) searchParams.append('error_description', errorDescription);
+        
+        // Add the parameters to the redirect URL
+        if (searchParams.toString()) {
+            redirectUrl += '?' + searchParams.toString();
+        }
+        
+        // Redirect to the docs/oauth-callback.html with the same parameters
+        window.location.href = redirectUrl;
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,52 +46,12 @@
         h1 {
             color: #0070d2;
         }
-        .success {
-            color: green;
-        }
-        .error {
-            color: red;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Salesforce Authentication</h1>
-        <div id="status">Processing authentication...</div>
+        <h1>Redirecting...</h1>
+        <p>Please wait while we process your authentication.</p>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Parse the URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            const error = urlParams.get('error');
-            const errorDescription = urlParams.get('error_description');
-            
-            if (code) {
-                // Authentication successful, store the authorization code
-                document.getElementById('status').innerHTML = '<p class="success">Authentication successful! Redirecting...</p>';
-                
-                // Store the code in sessionStorage
-                sessionStorage.setItem('sfAuthCode', code);
-                
-                // Redirect back to the main page
-                setTimeout(function() {
-                    window.location.href = window.location.origin;
-                }, 2000);
-            } else if (error) {
-                // Authentication failed
-                document.getElementById('status').innerHTML = 
-                    `<p class="error">Authentication failed: ${error}</p>
-                     <p>${errorDescription || ''}</p>
-                     <p><a href="${window.location.origin}">Return to main page</a></p>`;
-            } else {
-                // No code or error parameter found
-                document.getElementById('status').innerHTML = 
-                    `<p class="error">Invalid callback response</p>
-                     <p><a href="${window.location.origin}">Return to main page</a></p>`;
-            }
-        });
-    </script>
 </body>
 </html>
