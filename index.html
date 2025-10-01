@@ -84,7 +84,7 @@
     <script>
         // Configuration variables - these would come from your Salesforce Lightning Out 2.0 app setup
         const sfInstanceUrl = 'https://ibm-1fc.my.salesforce.com';
-        const clientId = 'YOUR_CONNECTED_APP_CLIENT_ID';
+        const clientId = '3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6';
         const redirectUri = 'https://sampath-arjunan.github.io/oauth-callback.html';
         
         // OAuth 2.0 configuration
@@ -142,7 +142,7 @@
             const tokenParams = new URLSearchParams({
                 grant_type: 'authorization_code',
                 client_id: clientId,
-                client_secret: 'YOUR_CLIENT_SECRET', // In production, this should be kept secure on server
+                client_secret: '0E24D47B4B2C3D0D1AD57972B499533C7C65A13DB0EAC8FADF3A74EA43801DEC', // In production, this should be kept secure on server
                 redirect_uri: redirectUri,
                 code: code
             });
