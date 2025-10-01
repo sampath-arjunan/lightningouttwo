@@ -92,6 +92,25 @@
         const authUrl = `${sfInstanceUrl}/services/oauth2/authorize`;
         const tokenUrl = `${sfInstanceUrl}/services/oauth2/token`;
         
+        // PKCE (Proof Key for Code Exchange) functions
+        async function generateCodeVerifier() {
+            const array = new Uint8Array(32);
+            window.crypto.getRandomValues(array);
+            return base64UrlEncode(array);
+        }
+        
+        async function generateCodeChallenge(codeVerifier) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(codeVerifier);
+            const digest = await window.crypto.subtle.digest('SHA-256', data);
+            return base64UrlEncode(new Uint8Array(digest));
+        }
+        
+        function base64UrlEncode(buffer) {
+            let base64 = btoa(String.fromCharCode.apply(null, buffer));
+            return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+        
         // Check for authentication code from callback
         function initializeAuth() {
             const authCode = sessionStorage.getItem('sfAuthCode');
@@ -116,20 +135,31 @@
             document.getElementById('logoutButton').addEventListener('click', logout);
         }
         
-        // Start the OAuth flow
-        function startAuth() {
+        // Start the OAuth flow with PKCE
+        async function startAuth() {
             const state = generateRandomString(16);
             sessionStorage.setItem('oauth_state', state);
             
-            // Debug: Log the client ID to make sure it's correct
+            // Generate PKCE code verifier and challenge
+            const codeVerifier = await generateCodeVerifier();
+            const codeChallenge = await generateCodeChallenge(codeVerifier);
+            
+            // Store the code verifier for later use
+            sessionStorage.setItem('pkce_code_verifier', codeVerifier);
+            
+            // Debug: Log the client ID and PKCE values
             console.log('Using client ID:', clientId);
+            console.log('Code verifier:', codeVerifier);
+            console.log('Code challenge:', codeChallenge);
             
             const authParams = new URLSearchParams({
                 response_type: 'code',
                 client_id: clientId,
                 redirect_uri: redirectUri,
                 state: state,
-                prompt: 'login consent'
+                prompt: 'login consent',
+                code_challenge: codeChallenge,
+                code_challenge_method: 'S256'
             });
             
             // Create the authorization URL
@@ -142,13 +172,33 @@
             window.location.href = authorizationUrl;
         }
         
-        // Direct login with hardcoded URL
-        function directLogin() {
+        // Direct login with hardcoded URL and PKCE
+        async function directLogin() {
             const state = generateRandomString(16);
             sessionStorage.setItem('oauth_state', state);
             
-            // Hardcoded URL with the correct client ID
-            const hardcodedUrl = `https://ibm-1fc.my.salesforce.com/services/oauth2/authorize?response_type=code&client_id=3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6&redirect_uri=https%3A%2F%2Fsampath-arjunan.github.io%2Foauth-callback.html&state=${state}&prompt=login+consent`;
+            // Generate PKCE code verifier and challenge
+            const codeVerifier = await generateCodeVerifier();
+            const codeChallenge = await generateCodeChallenge(codeVerifier);
+            
+            // Store the code verifier for later use
+            sessionStorage.setItem('pkce_code_verifier', codeVerifier);
+            
+            console.log('Code verifier:', codeVerifier);
+            console.log('Code challenge:', codeChallenge);
+            
+            // Build the URL with PKCE parameters
+            const authParams = new URLSearchParams({
+                response_type: 'code',
+                client_id: '3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6',
+                redirect_uri: 'https://sampath-arjunan.github.io/oauth-callback.html',
+                state: state,
+                prompt: 'login consent',
+                code_challenge: codeChallenge,
+                code_challenge_method: 'S256'
+            });
+            
+            const hardcodedUrl = `https://ibm-1fc.my.salesforce.com/services/oauth2/authorize?${authParams.toString()}`;
             
             console.log('Using hardcoded URL:', hardcodedUrl);
             
@@ -156,7 +206,7 @@
             window.location.href = hardcodedUrl;
         }
         
-        // Exchange authorization code for access token
+        // Exchange authorization code for access token using PKCE
         function exchangeCodeForToken(code) {
             document.getElementById('connectionStatus').textContent = 'Authenticating...';
             
@@ -164,12 +214,24 @@
             // For demo purposes, we're using a client-side approach
             // Note: This requires CORS to be enabled on your Salesforce org
             
+            // Get the code verifier that was stored during the authorization request
+            const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
+            
+            if (!codeVerifier) {
+                console.error('No code verifier found in session storage');
+                document.getElementById('connectionStatus').textContent = 'Authentication failed: No code verifier';
+                document.getElementById('connectionStatus').className = 'status-error';
+                return;
+            }
+            
+            console.log('Using code verifier for token exchange:', codeVerifier);
+            
             const tokenParams = new URLSearchParams({
                 grant_type: 'authorization_code',
                 client_id: clientId,
-                client_secret: '0E24D47B4B2C3D0D1AD57972B499533C7C65A13DB0EAC8FADF3A74EA43801DEC', // In production, this should be kept secure on server
                 redirect_uri: redirectUri,
-                code: code
+                code: code,
+                code_verifier: codeVerifier
             });
             
             fetch(tokenUrl, {

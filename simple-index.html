@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Out 2.0 Flow Demo - Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #0070d2;
+        }
+        #flowContainer {
+            min-height: 400px;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .button {
+            background-color: #0070d2;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        c-lead-enquiry-flow-container {
+            display: block;
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Salesforce Flow Integration</h1>
+        <p>This page demonstrates embedding a Salesforce Flow using Lightning Out 2.0</p>
+        
+        <div id="flowContainer">
+            <!-- Lightning Out components will be inserted here -->
+        </div>
+        
+        <button id="loadButton" class="button">Load Flow</button>
+    </div>
+
+    <script>
+        document.getElementById('loadButton').addEventListener('click', function() {
+            // Load the Lightning Out 2.0 script
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            script.src = 'https://ibm-1fc.my.salesforce.com/lightning/lightning.out.latest/index.iife.prod.js';
+            document.head.appendChild(script);
+            
+            script.onload = function() {
+                const flowContainer = document.getElementById('flowContainer');
+                
+                // Create the Lightning Out application element
+                const lightningOutApp = document.createElement('lightning-out-application');
+                lightningOutApp.setAttribute('components', 'c-lead-enquiry-flow-container');
+                
+                // Set the frontdoor URL - in a real app, you would get this from an authentication process
+                // For this example, we're using a placeholder
+                const frontdoorUrl = 'https://ibm-1fc.my.salesforce.com/secur/frontdoor.jsp?sid=YOUR_SESSION_ID';
+                lightningOutApp.setAttribute('frontdoor-url', frontdoorUrl);
+                
+                // Add the Lightning Out application to the flow container
+                flowContainer.appendChild(lightningOutApp);
+                
+                // Create the LWC component
+                const lwcComponent = document.createElement('c-lead-enquiry-flow-container');
+                
+                // Set any attributes for the component
+                lwcComponent.setAttribute('flow-api-name', 'Lead_Enquiry_Form');
+                lwcComponent.setAttribute('title', 'Lead Enquiry Form');
+                lwcComponent.setAttribute('subtitle', 'Please fill out the form below');
+                lwcComponent.setAttribute('show-header', 'true');
+                
+                // Add the LWC component to the flow container
+                flowContainer.appendChild(lwcComponent);
+            };
+        });
+    </script>
+</body>
+</html>
