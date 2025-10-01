@@ -29,12 +29,6 @@ Before you can use this integration, you need to:
 4. Save the Connected App
 5. After saving, note the **Consumer Key** (Client ID) and **Consumer Secret**
 
-Consumer Key
-3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6
-
-Consumer Secret
-0E24D47B4B2C3D0D1AD57972B499533C7C65A13DB0EAC8FADF3A74EA43801DEC
-
 ### 2. Create a Lightning Out 2.0 App
 
 1. In Salesforce Setup, go to **Apps** > **Lightning Out 2.0 Apps**
