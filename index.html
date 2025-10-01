@@ -119,6 +119,9 @@
             const state = generateRandomString(16);
             sessionStorage.setItem('oauth_state', state);
             
+            // Debug: Log the client ID to make sure it's correct
+            console.log('Using client ID:', clientId);
+            
             const authParams = new URLSearchParams({
                 response_type: 'code',
                 client_id: clientId,
@@ -127,8 +130,14 @@
                 prompt: 'login consent'
             });
             
+            // Create the authorization URL
+            const authorizationUrl = `${authUrl}?${authParams.toString()}`;
+            
+            // Debug: Log the full authorization URL
+            console.log('Authorization URL:', authorizationUrl);
+            
             // Redirect to Salesforce login
-            window.location.href = `${authUrl}?${authParams.toString()}`;
+            window.location.href = authorizationUrl;
         }
         
         // Exchange authorization code for access token
