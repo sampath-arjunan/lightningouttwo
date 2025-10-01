@@ -71,6 +71,7 @@
         <div id="authStatus">
             <p>Status: <span id="connectionStatus">Not connected</span></p>
             <button id="loginButton" class="button">Connect to Salesforce</button>
+            <button id="directLoginButton" class="button" style="background-color: #4CAF50;">Direct Login (Hardcoded URL)</button>
             <button id="logoutButton" class="button hidden">Disconnect</button>
         </div>
         
@@ -111,6 +112,7 @@
             
             // Set up event listeners
             document.getElementById('loginButton').addEventListener('click', startAuth);
+            document.getElementById('directLoginButton').addEventListener('click', directLogin);
             document.getElementById('logoutButton').addEventListener('click', logout);
         }
         
@@ -138,6 +140,20 @@
             
             // Redirect to Salesforce login
             window.location.href = authorizationUrl;
+        }
+        
+        // Direct login with hardcoded URL
+        function directLogin() {
+            const state = generateRandomString(16);
+            sessionStorage.setItem('oauth_state', state);
+            
+            // Hardcoded URL with the correct client ID
+            const hardcodedUrl = `https://ibm-1fc.my.salesforce.com/services/oauth2/authorize?response_type=code&client_id=3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6&redirect_uri=https%3A%2F%2Fsampath-arjunan.github.io%2Foauth-callback.html&state=${state}&prompt=login+consent`;
+            
+            console.log('Using hardcoded URL:', hardcodedUrl);
+            
+            // Redirect to Salesforce login
+            window.location.href = hardcodedUrl;
         }
         
         // Exchange authorization code for access token
@@ -280,9 +296,40 @@
             return result;
         }
         
+        // Test function to verify client ID
+        function testClientId() {
+            console.log('Client ID from variable:', clientId);
+            console.log('Expected Client ID:', '3MVG9aNlkJwuH9vN93aw6idrSVeCWjPsSepkLoGtd0DOjfS_4L_BT9H633lvjkOSidDON1yxlfPRxgwm34PG6');
+            
+            // Create a test URL
+            const testParams = new URLSearchParams({
+                response_type: 'code',
+                client_id: clientId,
+                redirect_uri: redirectUri,
+                state: 'test',
+                prompt: 'login consent'
+            });
+            
+            console.log('Test URL params:', testParams.toString());
+            console.log('Client ID in URL:', testParams.get('client_id'));
+            
+            // Display in the UI
+            const flowContainer = document.getElementById('flowContainer');
+            flowContainer.innerHTML += `
+                <div style="margin-top: 20px; padding: 10px; background-color: #f8f8f8; border: 1px solid #ddd;">
+                    <h3>Debug Information</h3>
+                    <p><strong>Client ID:</strong> ${clientId}</p>
+                    <p><strong>Redirect URI:</strong> ${redirectUri}</p>
+                    <p><strong>Auth URL:</strong> ${authUrl}</p>
+                </div>
+            `;
+        }
+        
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             initializeAuth();
+            // Run the test function
+            testClientId();
         });
     </script>
 </body>
