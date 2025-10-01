@@ -1,0 +1,27 @@
+<template>
+    <div class="container">
+        <!-- Optional header section -->
+        <template if:true={showHeader}>
+            <div class="header">
+                <h2>{title}</h2>
+                <p if:true={subtitle}>{subtitle}</p>
+            </div>
+        </template>
+        
+        <!-- Flow container -->
+        <div class="flow-container">
+            <template if:true={flowStarted}>
+                <lightning-flow
+                    flow-api-name={flowApiName}
+                    flow-input-variables={flowInputVariables}
+                    onstatuschange={handleStatusChange}>
+                </lightning-flow>
+            </template>
+            <template if:false={flowStarted}>
+                <div class="loading-placeholder">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

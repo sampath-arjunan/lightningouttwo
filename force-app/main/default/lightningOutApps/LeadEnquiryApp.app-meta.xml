@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningOutApp xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <description>Lightning Out 2.0 app for Lead Enquiry Form</description>
+    <masterLabel>Lead Enquiry App</masterLabel>
+    <components>
+        <componentName>c:leadEnquiryFlowContainer</componentName>
+    </components>
+    <isExposed>true</isExposed>
+</LightningOutApp>
+
+<!-- Made with Bob -->
