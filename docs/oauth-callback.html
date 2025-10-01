@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Callback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #0070d2;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Salesforce Authentication</h1>
+        <div id="status">Processing authentication...</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parse the URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            const errorDescription = urlParams.get('error_description');
+            
+            if (code) {
+                // Authentication successful, store the authorization code
+                document.getElementById('status').innerHTML = '<p class="success">Authentication successful! Redirecting...</p>';
+                
+                // Store the code in sessionStorage
+                sessionStorage.setItem('sfAuthCode', code);
+                
+                // Redirect back to the main page
+                setTimeout(function() {
+                    window.location.href = window.location.origin;
+                }, 2000);
+            } else if (error) {
+                // Authentication failed
+                document.getElementById('status').innerHTML = 
+                    `<p class="error">Authentication failed: ${error}</p>
+                     <p>${errorDescription || ''}</p>
+                     <p><a href="${window.location.origin}">Return to main page</a></p>`;
+            } else {
+                // No code or error parameter found
+                document.getElementById('status').innerHTML = 
+                    `<p class="error">Invalid callback response</p>
+                     <p><a href="${window.location.origin}">Return to main page</a></p>`;
+            }
+        });
+    </script>
+</body>
+</html>
